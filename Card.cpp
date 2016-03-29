@@ -10,7 +10,7 @@
 #include "Card.h"
 using namespace std;
 
-Card::Card(string aSuite, int aNumber) {
+Card::Card(string aSuite, string aCardName) {
 	suite = aSuite;
-	number = aNumber;
+	cardName = aCardName;
 };

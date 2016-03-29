@@ -10,17 +10,15 @@
 #define CARDDECK_H
 
 #include <iostream>
+#include <list>
 #include "Card.h"
 using namespace std;
 
-
 class CardDeck {
-
-	private:
-	queue<Card> deck; // doesn't like Card here
 	
 	public:
 	CardDeck();
+	std::list<Card> deck;
 };
 
 #endif

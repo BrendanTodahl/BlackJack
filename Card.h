@@ -13,12 +13,12 @@
 using namespace std;
 
 class Card {
-	private:
-	string suite;
-	int number; // Jack = 11, Queen = 12, King = 13, A = 1
-	
 	public:
-	Card(string aSuite, int aNumber);
+	string suite;
+	string cardName; // Jack = 11, Queen = 12, King = 13, A = 1
+	
+	
+	Card(string aSuite, string aCardName);
 };
 
 #endif
