@@ -7,6 +7,7 @@
 */
 
 #include <iostream>
+#include <algorithm>
 #include "CardDeck.h"
 #include "Card.h"
 using namespace std;
@@ -21,5 +22,9 @@ CardDeck::CardDeck() {
 			deck.push_back(*card);
 		}
 	}
+};
+
+void CardDeck::shuffle() {
+	std::random_shuffle(deck.begin(), deck.end());
 };
 

@@ -10,7 +10,8 @@
 #define CARDDECK_H
 
 #include <iostream>
-#include <list>
+#include <algorithm>
+#include <vector>
 #include "Card.h"
 using namespace std;
 
@@ -18,7 +19,8 @@ class CardDeck {
 	
 	public:
 	CardDeck();
-	std::list<Card> deck;
+	void shuffle();
+	std::vector<Card> deck;
 };
 
 #endif
