@@ -16,8 +16,7 @@
 using namespace std;
 
 class CardDeck {
-	
-	public:
+public:
 	CardDeck();
 	void shuffle();
 	std::vector<Card> deck;

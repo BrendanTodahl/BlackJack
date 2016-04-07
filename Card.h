@@ -13,12 +13,11 @@
 using namespace std;
 
 class Card {
-	public:
+public:
+	Card(string aSuite, string aCardName);
+
 	string suite;
 	string cardName; // Jack = 11, Queen = 12, King = 13, A = 1
-	
-	
-	Card(string aSuite, string aCardName);
 };
 
 #endif

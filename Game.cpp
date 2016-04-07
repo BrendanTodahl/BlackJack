@@ -7,10 +7,13 @@
 */
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
 #include <vector>
 #include <string>
 #include "Card.h"
 #include "CardDeck.h"
+#include "User.h"
 using namespace std;
 
 // Starts the round by dealing two cards to both the player and dealer starting with the player
@@ -24,59 +27,177 @@ void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int 
 // Calculates the score of the given hand
 int calculateScore(std::vector<Card> hand, bool isDealerHand, bool isRoundOver);
 
+User *currentUser = new User();
+
 int main () 
 {
-	cout << "Welcome to BlackJack!" << endl << "1. Play game ... more soon! ";
-	int userInput;
-	cin >> userInput;
-	
-	if (userInput == 1)
+	bool applicationRunning = true;
+	while (applicationRunning)
 	{
-		// Start game
-		bool gameRunning = true;
-		while (gameRunning)
+		bool inMainMenu = true;
+		while (inMainMenu)
 		{
-			CardDeck *deck = new CardDeck();
-			deck->shuffle();
-			std::vector<Card> dealerHand;
-			std::vector<Card> playerHand;
-			
-			initialDeal(deck, &dealerHand, &playerHand);	
-			bool round = true;
-			bool userHandComplete = false;
-			while (round)
+			cout << "Welcome to BlackJack! What would you like to do?" << endl;
+			cout << "1. Sign In 2. Make Account 3. Quit ";
+			int mainMenuInput;
+			cin >> mainMenuInput;
+			if (mainMenuInput == 1)
 			{
-				int dealerScore = calculateScore(dealerHand, true, false);
-				int playerScore = calculateScore(playerHand, false, false);
-				if (!userHandComplete && playerScore < 21)
+				// Attempt Login
+				cout << "Enter Username/Email: "; 
+				string userName;
+				cin >> userName;
+				cout << "Enter password: ";
+				string password;
+				cin >> password;
+				// Search in UserData.txt for user
+				bool userFound = false;
+				string line;
+				ifstream userDataFile ("UserData.txt");
+				if (userDataFile.is_open())
 				{
-					printHands(dealerHand, playerHand, dealerScore, playerScore, false);
-					cout << "1. Hit 2. Stay ";
-					int roundChoice;
-					cin >> roundChoice;
-					if (roundChoice == 1)
+					getline(userDataFile, line); // Clear the format line
+					while (userFound == false && getline (userDataFile, line))
 					{
-						playerHand.push_back(deck->deck.back());
-						deck->deck.pop_back();
+						istringstream iss (line);
+						string tempUserName, tempPassword, tempName;
+						iss >> tempUserName;
+						iss >> tempPassword;
+						iss >> tempName;
+						if (userName.compare(tempUserName) == 0 && password.compare(tempPassword) == 0)
+						{
+							userFound = true;
+							inMainMenu = false;
+							currentUser = new User(tempName, tempPassword, tempName);
+							currentUser->setLoggedIn(true);
+						}
+					}
+					userDataFile.close();
+				}
+				else
+					cout << "Error: Unable to open file." << endl;
+				if (!currentUser->getLoggedIn())
+					cout << "Error: Either your username or password is incorrect." << endl;
+			}
+			else if (mainMenuInput == 2)
+			{
+				string userName;
+				bool inAccountCreation = true;
+				while (inAccountCreation)
+				{
+					// Account Creation
+					cout << "Enter Desired Username/Email: "; 
+					cin >> userName;
+					// Search in UserData.txt to see if name is available
+					bool userFound = false;
+					string line;
+					ifstream userDataFile ("UserData.txt");
+					if (userDataFile.is_open())
+					{
+						getline(userDataFile, line); // Clear the format line
+						while (userFound == false && getline (userDataFile, line))
+						{
+							istringstream iss (line);
+							string tempUserName, tempPassword, tempName;
+							iss >> tempUserName;
+							if (userName.compare(tempUserName) == 0)
+							{
+								userFound = true;
+							}
+						}
+						userDataFile.close();
 					}
 					else
+						cout << "Error: Unable to open file." << endl;
+					if (!userFound)
+						inAccountCreation = false;
+					else
+						cout << "Username/Email already taken. Try another..." << endl;
+				}
+				cout << "Enter password: ";
+				string password;
+				cin >> password;
+				cout << "Enter your name: ";
+				string name;
+				cin >> name;
+				ofstream userDataFile;
+				userDataFile.open("UserData.txt", std::ios::app);
+				if (userDataFile.is_open())
+				{
+					userDataFile << "\n" + userName + " " + password + " " + name;
+				}
+				else
+					cout << "Error: unable to open file." << endl;
+			}
+			else if (mainMenuInput == 3)
+			{
+				inMainMenu = false;
+				applicationRunning = false;
+			}
+		}
+		if (currentUser->getLoggedIn()) // Check if login is successful and 3 wasn't pressed
+		{
+			while (currentUser->getLoggedIn())
+			{
+				cout << "Welcome " << currentUser->name << "!" << endl;
+				cout << "1. Play game 2. Logout... more coming soon! ";
+				int userInput;
+				cin >> userInput;
+				
+				if (userInput == 1)
+				{
+					// Start game
+					bool gameRunning = true;
+					while (gameRunning)
 					{
-						userHandComplete = true;
+						CardDeck *deck = new CardDeck();
+						deck->shuffle();
+						std::vector<Card> dealerHand;
+						std::vector<Card> playerHand;
+						
+						initialDeal(deck, &dealerHand, &playerHand);	
+						bool round = true;
+						bool userHandComplete = false;
+						while (round)
+						{
+							int dealerScore = calculateScore(dealerHand, true, false);
+							int playerScore = calculateScore(playerHand, false, false);
+							if (!userHandComplete && playerScore < 21)
+							{
+								printHands(dealerHand, playerHand, dealerScore, playerScore, false);
+								cout << "1. Hit 2. Stay ";
+								int roundChoice;
+								cin >> roundChoice;
+								if (roundChoice == 1)
+								{
+									playerHand.push_back(deck->deck.back());
+									deck->deck.pop_back();
+								}
+								else
+								{
+									userHandComplete = true;
+								}
+							}
+							else // Finish the dealers hand and finish round
+							{
+								if (playerScore <= 21 && !(playerScore == 21 && playerHand.size() == 2)) // If player "busts", then dealer doesn't need to play
+								{
+									finishDealerHand(deck, &dealerHand);
+								}
+								dealerScore = calculateScore(dealerHand, true, true);
+								printHands(dealerHand, playerHand, dealerScore, playerScore, true);
+								determineWinner(dealerScore, playerScore, dealerHand.size(), playerHand.size(), &gameRunning, &round);
+							}
+						}
 					}
 				}
-				else // Finish the dealers hand and finish round
+				else if (userInput == 2)
 				{
-					if (playerScore <= 21 && !(playerScore == 21 && playerHand.size() == 2)) // If player "busts", then dealer doesn't need to play
-					{
-						finishDealerHand(deck, &dealerHand);
-					}
-					dealerScore = calculateScore(dealerHand, true, true);
-					printHands(dealerHand, playerHand, dealerScore, playerScore, true);
-					determineWinner(dealerScore, playerScore, dealerHand.size(), playerHand.size(), &gameRunning, &round);
+					cout << "Thanks for playing!" << endl;
+					currentUser = new User();
 				}
 			}
 		}
-		cout << "Thanks for playing!" << endl;
 	}
 	return 0;
 }
