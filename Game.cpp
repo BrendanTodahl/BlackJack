@@ -16,6 +16,10 @@
 #include "User.h"
 using namespace std;
 
+// Handles signing a user in
+void signIn(bool *inMainMenu);
+// Handles account creation
+void createAccount();
 // Starts the round by dealing two cards to both the player and dealer starting with the player
 void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card>  *playerHand);
 // Plays the game for the dealer, completing theiry hand
@@ -43,91 +47,11 @@ int main ()
 			cin >> mainMenuInput;
 			if (mainMenuInput == 1)
 			{
-				// Attempt Login
-				cout << "Enter Username/Email: "; 
-				string userName;
-				cin >> userName;
-				cout << "Enter password: ";
-				string password;
-				cin >> password;
-				// Search in UserData.txt for user
-				bool userFound = false;
-				string line;
-				ifstream userDataFile ("UserData.txt");
-				if (userDataFile.is_open())
-				{
-					getline(userDataFile, line); // Clear the format line
-					while (userFound == false && getline (userDataFile, line))
-					{
-						istringstream iss (line);
-						string tempUserName, tempPassword, tempName;
-						iss >> tempUserName;
-						iss >> tempPassword;
-						iss >> tempName;
-						if (userName.compare(tempUserName) == 0 && password.compare(tempPassword) == 0)
-						{
-							userFound = true;
-							inMainMenu = false;
-							currentUser = new User(tempName, tempPassword, tempName);
-							currentUser->setLoggedIn(true);
-						}
-					}
-					userDataFile.close();
-				}
-				else
-					cout << "Error: Unable to open file." << endl;
-				if (!currentUser->getLoggedIn())
-					cout << "Error: Either your username or password is incorrect." << endl;
+				signIn(&inMainMenu);
 			}
 			else if (mainMenuInput == 2)
 			{
-				string userName;
-				bool inAccountCreation = true;
-				while (inAccountCreation)
-				{
-					// Account Creation
-					cout << "Enter Desired Username/Email: "; 
-					cin >> userName;
-					// Search in UserData.txt to see if name is available
-					bool userFound = false;
-					string line;
-					ifstream userDataFile ("UserData.txt");
-					if (userDataFile.is_open())
-					{
-						getline(userDataFile, line); // Clear the format line
-						while (userFound == false && getline (userDataFile, line))
-						{
-							istringstream iss (line);
-							string tempUserName, tempPassword, tempName;
-							iss >> tempUserName;
-							if (userName.compare(tempUserName) == 0)
-							{
-								userFound = true;
-							}
-						}
-						userDataFile.close();
-					}
-					else
-						cout << "Error: Unable to open file." << endl;
-					if (!userFound)
-						inAccountCreation = false;
-					else
-						cout << "Username/Email already taken. Try another..." << endl;
-				}
-				cout << "Enter password: ";
-				string password;
-				cin >> password;
-				cout << "Enter your name: ";
-				string name;
-				cin >> name;
-				ofstream userDataFile;
-				userDataFile.open("UserData.txt", std::ios::app);
-				if (userDataFile.is_open())
-				{
-					userDataFile << "\n" + userName + " " + password + " " + name;
-				}
-				else
-					cout << "Error: unable to open file." << endl;
+				createAccount();
 			}
 			else if (mainMenuInput == 3)
 			{
@@ -135,11 +59,11 @@ int main ()
 				applicationRunning = false;
 			}
 		}
-		if (currentUser->getLoggedIn()) // Check if login is successful and 3 wasn't pressed
+		if (currentUser->getLoggedIn()) // Check if user is logged in
 		{
 			while (currentUser->getLoggedIn())
 			{
-				cout << "Welcome " << currentUser->name << "!" << endl;
+				cout << "Welcome " << currentUser->getUserName() << "!" << endl;
 				cout << "1. Play game 2. Logout... more coming soon! ";
 				int userInput;
 				cin >> userInput;
@@ -200,6 +124,100 @@ int main ()
 		}
 	}
 	return 0;
+}
+
+void signIn(bool *inMainMenu)
+{
+	// Attempt Login
+	cout << "Enter Username: "; 
+	string userName;
+	cin >> userName;
+	cout << "Enter password: ";
+	string password;
+	cin >> password;
+	// Search in UserData.txt for user
+	bool userFound = false;
+	string line;
+	ifstream userDataFile ("UserData.txt");
+	if (userDataFile.is_open())
+	{
+		getline(userDataFile, line); // Clear the format line
+		while (userFound == false && getline (userDataFile, line))
+		{
+			istringstream iss (line);
+			string tempID, tempUserName, tempPassword;
+			iss >> tempID;
+			iss >> tempUserName;
+			iss >> tempPassword;
+			if (userName.compare(tempUserName) == 0 && password.compare(tempPassword) == 0)
+			{
+				userFound = true;
+				*inMainMenu = false;
+				currentUser = new User(tempUserName, tempPassword);
+				currentUser->setLoggedIn(true);
+			}
+		}
+		userDataFile.close();
+	}
+	else
+		cerr << "Error: Unable to open file." << endl;
+	if (!currentUser->getLoggedIn())
+		cout << "Error: Either your username or password is incorrect." << endl;
+}
+
+void createAccount()
+{
+	string userName;
+	string possibleID;
+	bool inAccountCreation = true;
+	while (inAccountCreation)
+	{
+		// Account Creation
+		cout << "Enter Desired Username: "; 
+		cin >> userName;
+		// Search in UserData.txt to see if name is available
+		bool userFound = false;
+		string line;
+		ifstream userDataFile ("UserData.txt");
+		if (userDataFile.is_open())
+		{
+			getline(userDataFile, line); // Clear the format line
+			while (userFound == false && getline (userDataFile, line))
+			{
+				istringstream iss (line);
+				string tempUserName, tempPassword;
+				iss >> possibleID; // Need to clear the ID
+				iss >> tempUserName;
+				if (userName.compare(tempUserName) == 0)
+				{
+					userFound = true;
+				}
+			}
+			userDataFile.close();
+		}
+		else
+			cerr << "Error: Unable to open file." << endl;
+		if (!userFound)
+			inAccountCreation = false;
+		else
+			cout << "Username already taken. Try another..." << endl;
+	}
+	cout << "Enter password: ";
+	string password;
+	cin >> password;
+	ofstream userDataFile;
+	userDataFile.open("UserData.txt", std::ios::app);
+	if (userDataFile.is_open())
+	{
+		int nextID = atoi(possibleID.c_str()) + 1;
+		string ID;
+		ostringstream convert;
+		convert << nextID;
+		ID = convert.str();
+		userDataFile << "\n" + ID + " " + userName + " " + password;
+	}
+	else
+		cerr << "Error: unable to open file." << endl;
 }
 
 void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card>  *playerHand)

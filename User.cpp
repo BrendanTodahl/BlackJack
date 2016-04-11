@@ -13,21 +13,35 @@ using namespace std;
 User::User() {
 	userName = "";
 	password = "";
-	name = "";
 	loggedIn = false;
 };
 
-User::User(string aUserName, string aPassword, string aName) {
+User::User(string aUserName, string aPassword) {
 	userName = aUserName;
 	password = aPassword;
-	name = aName;
 	loggedIn = false;
 };
 
-User::getLoggedIn() {
+bool User::getLoggedIn() {
 	return loggedIn;
 };
 
-User::setLoggedIn(bool aLoggedIn) {
+void User::setLoggedIn(bool aLoggedIn) {
 	loggedIn = aLoggedIn;
+};
+
+string User::getUserName() {
+	return userName;
+};
+
+void User::setUserName(string aUserName) {
+	userName = aUserName;
+};
+
+string User::getPassword() {
+	return password;
+};
+
+void User::setPassword(string aPassword) {
+	password = aPassword;
 };

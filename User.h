@@ -15,15 +15,16 @@ using namespace std;
 class User {
 public:
 	User();
-	User(string aUserName, string aPassword, string aName);
-	getLoggedIn();
-	setLoggedIn(bool aLoggedIn);
-
+	User(string aUserName, string aPassword);
+	bool getLoggedIn();
+	void setLoggedIn(bool aLoggedIn);
+	string getUserName();
+	void setUserName(string aUserName);
+	string getPassword();
+	void setPassword(string aPassword);
+private:
 	string userName;
 	string password;
-	string name;
-
-private:
 	bool loggedIn;
 };
 

@@ -1,2 +1,4 @@
-format:userName password name
-b@g.com password Brendan
+format:id userName password
+1 Brendan pass
+2 Kyle pass
+3 Test pass
