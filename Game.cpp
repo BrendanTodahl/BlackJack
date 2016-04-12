@@ -11,6 +11,8 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <cstring>
+#include <cstdlib>
 #include "Card.h"
 #include "CardDeck.h"
 #include "User.h"
@@ -24,7 +26,7 @@ void createAccount();
 void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card>  *playerHand);
 // Plays the game for the dealer, completing theiry hand
 void finishDealerHand(CardDeck *deck, std::vector<Card> *dealerhand);
-// Takes the player and dealer's score and determines the outcome of the round
+// Takes the player and dealer's score and determines the outcome of the round. Tie doesn't change stats.
 void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int playerHandSize, bool *gameRunning, bool *round);
 // Takes the hands of both the dealer and players and their respective scores and prints the information to the screen
 void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver);
@@ -41,7 +43,7 @@ int main ()
 		bool inMainMenu = true;
 		while (inMainMenu)
 		{
-			cout << "Welcome to BlackJack! What would you like to do?" << endl;
+			cout << endl << "Welcome to BlackJack! What would you like to do?" << endl;
 			cout << "1. Sign In 2. Make Account 3. Quit ";
 			int mainMenuInput;
 			cin >> mainMenuInput;
@@ -63,8 +65,8 @@ int main ()
 		{
 			while (currentUser->getLoggedIn())
 			{
-				cout << "Welcome " << currentUser->getUserName() << "!" << endl;
-				cout << "1. Play game 2. Logout... more coming soon! ";
+				cout << endl << "Welcome " << currentUser->getUserName() << "!" << endl;
+				cout << "1. Play game 2. Stats 3. Logout ";
 				int userInput;
 				cin >> userInput;
 				
@@ -115,7 +117,11 @@ int main ()
 						}
 					}
 				}
-				else if (userInput == 2)
+				else if (userInput == 2) // Check stats
+				{
+					cout << "Games Won: " << currentUser->getNumGamesWon() << " Games Played: " << currentUser->getNumGamesPlayed() << " Win Percentage: " << currentUser->getWinPercentage() << endl;
+				}
+				else if (userInput == 3) // logout
 				{
 					cout << "Thanks for playing!" << endl;
 					currentUser = new User();
@@ -153,7 +159,7 @@ void signIn(bool *inMainMenu)
 			{
 				userFound = true;
 				*inMainMenu = false;
-				currentUser = new User(tempUserName, tempPassword);
+				currentUser = new User(atoi(tempID.c_str()), tempUserName, tempPassword);
 				currentUser->setLoggedIn(true);
 			}
 		}
@@ -205,19 +211,25 @@ void createAccount()
 	cout << "Enter password: ";
 	string password;
 	cin >> password;
+	int nextID = atoi(possibleID.c_str()) + 1;
+	string ID;
+	ostringstream convert;
+	convert << nextID;
+	ID = convert.str();
 	ofstream userDataFile;
 	userDataFile.open("UserData.txt", std::ios::app);
 	if (userDataFile.is_open())
 	{
-		int nextID = atoi(possibleID.c_str()) + 1;
-		string ID;
-		ostringstream convert;
-		convert << nextID;
-		ID = convert.str();
-		userDataFile << "\n" + ID + " " + userName + " " + password;
+		userDataFile << "\n" << ID << " " << userName << " " << password;
 	}
 	else
 		cerr << "Error: unable to open file." << endl;
+	ofstream userStatsFile;
+	userStatsFile.open("Scores.txt", std::ios::app);
+	if (userStatsFile.is_open())
+	{
+		userStatsFile << "\n" << ID << " 0" << " 0";
+	}
 }
 
 void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card>  *playerHand)
@@ -256,10 +268,12 @@ void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int p
 	if (playerScore > 21) // Player bust
 	{
 		cout << "Player bust! Round over. Play again?" << endl;
+		currentUser->updateStats(false);
 	}
 	else if (dealerScore > 21) // Dealer bust
 	{
 		cout << "Dealer bust! Player wins! Play again?" << endl;
+		currentUser->updateStats(true);
 	}
 	else if (playerScore == 21 && playerHandSize == 2)
 	{
@@ -271,19 +285,23 @@ void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int p
 		else
 		{
 			cout << "BlackJack! Player wins! Play again?" << endl;
+			currentUser->updateStats(true);
 		}
 	}
 	else if (dealerScore == 21 && dealerHandSize == 2)
 	{
 		cout << "BlackJack! Dealer wins! Play again?" << endl;
+		currentUser->updateStats(false);
 	}
 	else if (playerScore > dealerScore) // Player win
 	{
 		cout << "Player wins! Play again?" << endl;
+		currentUser->updateStats(true);
 	}
 	else if (dealerScore > playerScore) // Dealer win
 	{
 		cout << "Dealer wins! Play again?" << endl;
+		currentUser->updateStats(false);
 	}
 	else // Tie
 	{

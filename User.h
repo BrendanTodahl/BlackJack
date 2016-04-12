@@ -10,22 +10,37 @@
 #define USER_H
 
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <cstring>
+#include <cstdlib>
+#include <string>
 using namespace std;
 
 class User {
 public:
 	User();
-	User(string aUserName, string aPassword);
+	User(int aID, string aUserName, string aPassword);
 	bool getLoggedIn();
 	void setLoggedIn(bool aLoggedIn);
+	int getID();
 	string getUserName();
 	void setUserName(string aUserName);
 	string getPassword();
 	void setPassword(string aPassword);
+	void fetchGameStats();
+	void updateStats(bool playerWon);
+	int getNumGamesWon();
+	int getNumGamesPlayed();
+	double getWinPercentage();
 private:
+	int ID;
 	string userName;
 	string password;
 	bool loggedIn;
+	int numGamesWon;
+	int numGamesPlayed;
+	double winPercentage;
 };
 
 #endif

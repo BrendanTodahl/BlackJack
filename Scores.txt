@@ -1,0 +1,6 @@
+format: ID numGamesWon numGamesPlayed
+1 2 14
+2 2 8
+3 0 1
+4 0 0
+5 0 1
