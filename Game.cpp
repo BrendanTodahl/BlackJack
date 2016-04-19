@@ -6,15 +6,14 @@
 	- Handles the game mechanics
 
 	TODO:
-	- Add comments and cleanup code
-	- Add high scores view
-	- View high score for current player
+	- Check user input for correct type of input
 */
 
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <map>
 #include <string>
 #include <cstring>
 #include <cstdlib>
@@ -37,6 +36,14 @@ void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int p
 void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver);
 // Calculates the score of the given hand
 int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver);
+// Displays the scores for all players in order of highest to lowest
+void displayLeaderboards();
+
+// Takes two pairs and return true if the first has a higher value than the second and false otherwise.
+bool pairComparer (pair<int, float> i, pair<int, float> j)
+{
+	return i.second > j.second;
+}
 
 User *currentUser = new User();
 
@@ -49,7 +56,7 @@ int main ()
 		while (inMainMenu)
 		{
 			cout << endl << "Welcome to BlackJack! What would you like to do?" << endl;
-			cout << "1. Sign In 2. Make Account 3. Quit ";
+			cout << "1. Sign In 2. Make Account 3. Leaderboards 4. Quit ";
 			int mainMenuInput;
 			cin >> mainMenuInput;
 			if (mainMenuInput == 1)
@@ -62,6 +69,10 @@ int main ()
 			}
 			else if (mainMenuInput == 3)
 			{
+				displayLeaderboards();
+			}
+			else if (mainMenuInput == 4)
+			{
 				inMainMenu = false;
 				applicationRunning = false;
 			}
@@ -71,7 +82,7 @@ int main ()
 			while (currentUser->getLoggedIn())
 			{
 				cout << endl << "Welcome " << currentUser->getUserName() << "!" << endl;
-				cout << "1. Play game 2. Stats 3. Logout ";
+				cout << "1. Play game 2. Stats 3. Leaderboards 4. Logout ";
 				int userInput;
 				cin >> userInput;
 				
@@ -124,9 +135,13 @@ int main ()
 				}
 				else if (userInput == 2) // Check stats
 				{
-					cout << "Games Won: " << currentUser->getNumGamesWon() << " Games Played: " << currentUser->getNumGamesPlayed() << " Win Percentage: " << currentUser->getWinPercentage() << endl;
+					cout << "\nGames Won: " << currentUser->getNumGamesWon() << " Games Played: " << currentUser->getNumGamesPlayed() << " Win Percentage: " << currentUser->getWinPercentage() << endl;
 				}
-				else if (userInput == 3) // logout
+				else if (userInput == 3) // Display leaderboards
+				{
+					displayLeaderboards();
+				}
+				else if (userInput == 4) // logout
 				{
 					cout << "Thanks for playing!" << endl;
 					currentUser = new User();
@@ -401,4 +416,67 @@ int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver)
 		}
 	}
 	return score;
+}
+
+void displayLeaderboards() 
+{
+	map<int, string> names;
+	vector<pair<int, int> > gamesWon;			// key is player ID
+	map<int, int> gamesPlayed;					// key is player ID
+	map<int, float> winPercentage; 	// key is player ID
+	string line;
+	ifstream userDataFile ("UserData.txt");
+	if (userDataFile.is_open())
+	{
+		getline(userDataFile, line); // Clear the format line
+		while (getline (userDataFile, line))
+		{
+			istringstream iss (line);
+			string currentID, currentUserName;
+			iss >> currentID;
+			iss >> currentUserName;
+			names.insert(std::pair<int, string>(atoi(currentID.c_str()), currentUserName));
+		}
+		userDataFile.close();
+	}
+	else
+		cerr << "Error: Unable to open file." << endl;
+
+	ifstream scoresDataFile ("Scores.txt");
+	if (scoresDataFile.is_open())
+	{
+		getline(scoresDataFile, line); // Clear the format line
+		while (getline (scoresDataFile, line))
+		{
+			istringstream iss (line);
+			string currentID, numGamesWon, numGamesPlayed;
+			iss >> currentID;
+			iss >> numGamesWon;
+			iss >> numGamesPlayed;
+			gamesWon.push_back(std::pair<int, int>(atoi(currentID.c_str()), atoi(numGamesWon.c_str())));
+			gamesPlayed.insert(std::pair<int, int>(atoi(currentID.c_str()), atoi(numGamesPlayed.c_str())));
+			float possibleWinPercentageNumerator = atof(numGamesWon.c_str());
+			float possibleWinPecentageDenominator = atof(numGamesPlayed.c_str());
+			if (possibleWinPecentageDenominator == 0)
+			{
+				winPercentage.insert(std::pair<int, float>(atoi(currentID.c_str()), 0.0f));
+			}
+			else
+			{
+ 				winPercentage.insert(std::pair<int, float>(atoi(currentID.c_str()), possibleWinPercentageNumerator/possibleWinPecentageDenominator));
+			}
+		}
+		scoresDataFile.close();
+	}
+	else
+		cerr << "Error: Unable to open file." << endl;
+	
+	// Sort the scores from highest to lowest and print the results to the screen
+	std::sort(gamesWon.begin(), gamesWon.end(), pairComparer);
+	cout << "\nGlobal leaderboards ranked by total number of wins!" << endl;
+	cout << "Name:\t\tGames Won:\tWin Percentage:" << endl;
+	for (int i = 0; i < gamesWon.size(); i++)
+	{
+		cout << names.at(gamesWon[i].first) << "\t\t" << gamesWon[i].second << "\t\t" << winPercentage.at(gamesWon[i].first) * 100 << "%" << endl;
+	}
 }

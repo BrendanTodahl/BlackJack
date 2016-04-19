@@ -75,7 +75,7 @@ void User::fetchGameStats() {
 		}
 		else
 		{
-			winPercentage = (double)numGamesWon/numGamesPlayed;
+			winPercentage = (float)numGamesWon/numGamesPlayed;
 		}
 	}
 	else
@@ -110,7 +110,7 @@ void User::updateStats(bool playerWon) {
 				{
 					numGamesWon = atoi(tempNumGamesWon.c_str()) + 1;
 				}
-				winPercentage = (double)numGamesWon/numGamesPlayed;
+				winPercentage = (float)numGamesWon/numGamesPlayed;
 				lineNumberOfUser = counter;
 			}
 			lines.push_back(line);
@@ -153,6 +153,6 @@ int User::getNumGamesPlayed() {
 	return numGamesPlayed;
 };
 
-double User::getWinPercentage() {
+float User::getWinPercentage() {
 	return winPercentage;
 };

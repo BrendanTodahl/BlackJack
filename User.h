@@ -28,7 +28,7 @@ public:
 	void updateStats(bool playerWon);
 	int getNumGamesWon();
 	int getNumGamesPlayed();
-	double getWinPercentage();
+	float getWinPercentage();
 private:
 	int ID;
 	string userName;
@@ -36,7 +36,7 @@ private:
 	bool loggedIn;
 	int numGamesWon;
 	int numGamesPlayed;
-	double winPercentage;
+	float winPercentage;
 };
 
 #endif
