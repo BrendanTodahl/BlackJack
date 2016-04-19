@@ -132,11 +132,25 @@ void User::updateStats(bool playerWon) {
 		{
 			if (i == lineNumberOfUser)
 			{
-				userStatsFileUpdate << ID << " " << numGamesWon << " " << numGamesPlayed << "\n";
+				if (i == lines.size() - 1)
+				{
+					userStatsFileUpdate << ID << " " << numGamesWon << " " << numGamesPlayed;
+				}
+				else
+				{
+					userStatsFileUpdate << ID << " " << numGamesWon << " " << numGamesPlayed << "\n";
+				}
 			}
 			else
 			{
-				userStatsFileUpdate << lines[i] << "\n";
+				if (i == lines.size() - 1)
+				{
+					userStatsFileUpdate << lines[i];
+				}
+				else
+				{
+					userStatsFileUpdate << lines[i] << "\n";
+				}
 			}
 		}
 	}
