@@ -19,7 +19,7 @@ class CardDeck {
 public:
 	CardDeck();
 	void shuffle();
-	std::vector<Card> deck;
+	vector<Card> deck;
 };
 
 #endif

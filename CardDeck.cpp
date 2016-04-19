@@ -25,6 +25,6 @@ CardDeck::CardDeck() {
 };
 
 void CardDeck::shuffle() {
-	std::random_shuffle(deck.begin(), deck.end());
+	random_shuffle(deck.begin(), deck.end());
 };
 
