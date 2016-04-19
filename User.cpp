@@ -39,26 +39,11 @@ void User::setLoggedIn(bool aLoggedIn) {
 	loggedIn = aLoggedIn;
 };
 
-int User::getID() {
-	return ID;
-};
-
 string User::getUserName() {
 	return userName;
 };
 
-void User::setUserName(string aUserName) {
-	userName = aUserName;
-};
-
-string User::getPassword() {
-	return password;
-};
-
-void User::setPassword(string aPassword) {
-	password = aPassword;
-};
-
+// Get a reference to the current stats of current user
 void User::fetchGameStats() {
 	string line;
 	ifstream userStatsFile ("Scores.txt");
@@ -98,8 +83,8 @@ void User::fetchGameStats() {
 };
 
 void User::updateStats(bool playerWon) {
-	// Need to write to Scores.txt and update the appropriate stats
-	std::vector<string> lines;
+	// read from file and update stats of current player object
+	vector<string> lines;
 	int lineNumberOfUser = 1;
 	string line;
 	ifstream userStatsFile ("Scores.txt");
@@ -137,6 +122,7 @@ void User::updateStats(bool playerWon) {
 		cerr << "Error: Unable to open file." << endl;
 	userStatsFile.close();
 	
+	// write back to the same file with the updated stats
 	ofstream userStatsFileUpdate;
 	userStatsFileUpdate.open("Scores.txt");
 	if (userStatsFileUpdate.is_open())

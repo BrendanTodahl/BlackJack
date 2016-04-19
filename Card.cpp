@@ -14,3 +14,11 @@ Card::Card(string aSuite, string aCardName) {
 	suite = aSuite;
 	cardName = aCardName;
 };
+
+string Card::getSuite() {
+	return suite;
+};
+
+string Card::getCardName() {
+	return cardName;
+};

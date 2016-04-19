@@ -15,9 +15,12 @@ using namespace std;
 class Card {
 public:
 	Card(string aSuite, string aCardName);
+	string getSuite();
+	string getCardName();
 
+private:
 	string suite;
-	string cardName; // Jack = 11, Queen = 12, King = 13, A = 1
+	string cardName;
 };
 
 #endif

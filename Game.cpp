@@ -4,6 +4,11 @@
 	
 	Game.cpp
 	- Handles the game mechanics
+
+	TODO:
+	- Add comments and cleanup code
+	- Add high scores view
+	- View high score for current player
 */
 
 #include <iostream>
@@ -23,15 +28,15 @@ void signIn(bool *inMainMenu);
 // Handles account creation
 void createAccount();
 // Starts the round by dealing two cards to both the player and dealer starting with the player
-void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card>  *playerHand);
+void initialDeal(CardDeck *deck, vector<Card> *dealerHand, vector<Card>  *playerHand);
 // Plays the game for the dealer, completing theiry hand
-void finishDealerHand(CardDeck *deck, std::vector<Card> *dealerhand);
+void finishDealerHand(CardDeck *deck, vector<Card> *dealerhand);
 // Takes the player and dealer's score and determines the outcome of the round. Tie doesn't change stats.
 void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int playerHandSize, bool *gameRunning, bool *round);
 // Takes the hands of both the dealer and players and their respective scores and prints the information to the screen
-void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver);
+void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver);
 // Calculates the score of the given hand
-int calculateScore(std::vector<Card> hand, bool isDealerHand, bool isRoundOver);
+int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver);
 
 User *currentUser = new User();
 
@@ -78,8 +83,8 @@ int main ()
 					{
 						CardDeck *deck = new CardDeck();
 						deck->shuffle();
-						std::vector<Card> dealerHand;
-						std::vector<Card> playerHand;
+						vector<Card> dealerHand;
+						vector<Card> playerHand;
 						
 						initialDeal(deck, &dealerHand, &playerHand);	
 						bool round = true;
@@ -208,6 +213,7 @@ void createAccount()
 		else
 			cout << "Username already taken. Try another..." << endl;
 	}
+	// Username is not taken so proceed with account creation
 	cout << "Enter password: ";
 	string password;
 	cin >> password;
@@ -217,7 +223,8 @@ void createAccount()
 	convert << nextID;
 	ID = convert.str();
 	ofstream userDataFile;
-	userDataFile.open("UserData.txt", std::ios::app);
+	userDataFile.open("UserData.txt", ios::app);
+	// Write user account information
 	if (userDataFile.is_open())
 	{
 		userDataFile << "\n" << ID << " " << userName << " " << password;
@@ -225,14 +232,15 @@ void createAccount()
 	else
 		cerr << "Error: unable to open file." << endl;
 	ofstream userStatsFile;
-	userStatsFile.open("Scores.txt", std::ios::app);
+	userStatsFile.open("Scores.txt", ios::app);
+	// Initialize new user scores in Scores.txt
 	if (userStatsFile.is_open())
 	{
 		userStatsFile << "\n" << ID << " 0" << " 0";
 	}
 }
 
-void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card>  *playerHand)
+void initialDeal(CardDeck *deck, vector<Card> *dealerHand, vector<Card>  *playerHand)
 {
 	// Deal the cards
 	playerHand->push_back(deck->deck.back());
@@ -245,7 +253,7 @@ void initialDeal(CardDeck *deck, std::vector<Card> *dealerHand, std::vector<Card
 	deck->deck.pop_back();
 }
 
-void finishDealerHand(CardDeck *deck, std::vector<Card> *dealerHand)
+void finishDealerHand(CardDeck *deck, vector<Card> *dealerHand)
 {
 	bool handFinished = false;
 	while (!handFinished)
@@ -322,7 +330,7 @@ void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int p
 	}
 }
 
-void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver) 
+void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver) 
 {
 	int i;
 	cout << endl << "Dealer: ";
@@ -331,7 +339,7 @@ void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int 
 		// Show all cards, round is over
 		for (i = 0; i < dealerHand.size(); i++)
 		{
-			cout << " " << dealerHand[i].cardName << "-" << dealerHand[i].suite << " ";
+			cout << " " << dealerHand[i].getCardName() << "-" << dealerHand[i].getSuite() << " ";
 		}
 	}
 	else
@@ -339,7 +347,7 @@ void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int 
 		// Show all but one of the dealers cards
 		for (i = 0; i < dealerHand.size() - 1; i++)
 		{
-			cout << " " << dealerHand[i].cardName << "-" << dealerHand[i].suite << " ";
+			cout << " " << dealerHand[i].getCardName() << "-" << dealerHand[i].getSuite() << " ";
 		}
 	}
 	cout << endl;
@@ -347,13 +355,13 @@ void printHands(std::vector<Card> dealerHand, std::vector<Card> playerHand, int 
 	cout << "Player: "; // Replace this with user name
 	for (i = 0; i < playerHand.size(); i++)
 	{
-		cout << " " << playerHand[i].cardName << "-" << playerHand[i].suite << " ";
+		cout << " " << playerHand[i].getCardName() << "-" << playerHand[i].getSuite() << " ";
 	}
 	cout << endl;
 	cout << "Player Score: " << playerScore << endl;
 }
 
-int calculateScore(std::vector<Card> hand, bool isDealerHand, bool isRoundOver)
+int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver)
 {
 	int i;
 	int score = 0;
@@ -364,7 +372,7 @@ int calculateScore(std::vector<Card> hand, bool isDealerHand, bool isRoundOver)
 	}
 	for (i = 0; i < hand.size(); i++)
 	{
-		string cardName = hand[i].cardName;
+		string cardName = hand[i].getCardName();
 		if (cardName.compare("2") == 0 || cardName.compare("3") == 0 || cardName.compare("4") == 0 || cardName.compare("5") == 0 || cardName.compare("6") == 0 || cardName.compare("7") == 0 || cardName.compare("8") == 0 || cardName.compare("9") == 0 || cardName.compare("10") == 0)
 		{
 			score += atoi(cardName.c_str());

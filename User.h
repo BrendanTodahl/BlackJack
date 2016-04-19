@@ -23,11 +23,7 @@ public:
 	User(int aID, string aUserName, string aPassword);
 	bool getLoggedIn();
 	void setLoggedIn(bool aLoggedIn);
-	int getID();
 	string getUserName();
-	void setUserName(string aUserName);
-	string getPassword();
-	void setPassword(string aPassword);
 	void fetchGameStats();
 	void updateStats(bool playerWon);
 	int getNumGamesWon();
