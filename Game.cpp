@@ -15,6 +15,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <limits>
 #include <cstring>
 #include <cstdlib>
 #include "Card.h"
@@ -38,6 +39,8 @@ void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScor
 int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver);
 // Displays the scores for all players in order of highest to lowest
 void displayLeaderboards();
+// Checks for valid integer input
+int intValidInput(int min, int max);
 
 // Takes two pairs and return true if the first has a higher value than the second and false otherwise.
 bool pairComparer (pair<int, float> i, pair<int, float> j)
@@ -58,7 +61,7 @@ int main ()
 			cout << endl << "Welcome to BlackJack! What would you like to do?" << endl;
 			cout << "1. Sign In 2. Make Account 3. Leaderboards 4. Quit ";
 			int mainMenuInput;
-			cin >> mainMenuInput;
+			mainMenuInput = intValidInput(1, 4);
 			if (mainMenuInput == 1)
 			{
 				signIn(&inMainMenu);
@@ -84,7 +87,7 @@ int main ()
 				cout << endl << "Welcome " << currentUser->getUserName() << "!" << endl;
 				cout << "1. Play game 2. Stats 3. Leaderboards 4. Logout ";
 				int userInput;
-				cin >> userInput;
+				userInput = intValidInput(1, 4);
 				
 				if (userInput == 1)
 				{
@@ -109,7 +112,7 @@ int main ()
 								printHands(dealerHand, playerHand, dealerScore, playerScore, false);
 								cout << "1. Hit 2. Stay ";
 								int roundChoice;
-								cin >> roundChoice;
+								roundChoice = intValidInput(1, 2);
 								if (roundChoice == 1)
 								{
 									playerHand.push_back(deck->deck.back());
@@ -479,4 +482,18 @@ void displayLeaderboards()
 	{
 		cout << names.at(gamesWon[i].first) << "\t\t" << gamesWon[i].second << "\t\t" << winPercentage.at(gamesWon[i].first) * 100 << "%" << endl;
 	}
+}
+
+int intValidInput(int min, int max)
+{
+	int x;
+    cin >> x;
+    while(cin.fail() || x < min || x > max)
+    {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(),'\n');
+        cout << "Bad entry.  Enter a NUMBER between " << min << "-" << max << ": ";
+        cin >> x;
+    }
+    return x;
 }
