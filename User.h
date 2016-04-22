@@ -24,6 +24,7 @@ public:
 	bool getLoggedIn();
 	void setLoggedIn(bool aLoggedIn);
 	string getUserName();
+	string getUserPassword();
 	void fetchGameStats();
 	void updateStats(bool playerWon);
 	int getNumGamesWon();

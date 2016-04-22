@@ -33,6 +33,8 @@ void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScor
 int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver);
 // Displays the scores for all players in order of highest to lowest
 void displayLeaderboards();
+// Handles user input for the account settings menu
+void runAccountSettingsMenu();
 // Checks for valid integer input
 int intValidInput(int min, int max);
 
@@ -79,9 +81,9 @@ int main ()
 			while (currentUser->getLoggedIn())
 			{
 				cout << endl << "Welcome " << currentUser->getUserName() << "!" << endl;
-				cout << "1. Play game 2. Stats 3. Leaderboards 4. Logout ";
+				cout << "1. Play game 2. Stats 3. Leaderboards 4. Account Settings 5. Logout ";
 				int userInput;
-				userInput = intValidInput(1, 4);
+				userInput = intValidInput(1, 5);
 				
 				if (userInput == 1)
 				{
@@ -138,7 +140,11 @@ int main ()
 				{
 					displayLeaderboards();
 				}
-				else if (userInput == 4) // logout
+				else if (userInput == 4) // Account info
+				{
+					runAccountSettingsMenu();
+				}
+				else if (userInput == 5) // logout
 				{
 					cout << "Thanks for playing!" << endl;
 					currentUser = new User();
@@ -373,6 +379,11 @@ void displayLeaderboards()
 	{
 		cout << names.at(gamesWon[i].first) << "\t\t" << gamesWon[i].second << "\t\t" << winPercentage.at(gamesWon[i].first) * 100 << "%" << endl;
 	}
+}
+
+void runAccountSettingsMenu() 
+{
+	cout << "User name: " << currentUser->getUserName() << " Password: " << currentUser->getUserPassword() << endl;
 }
 
 int intValidInput(int min, int max)
