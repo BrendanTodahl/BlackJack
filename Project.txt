@@ -1,0 +1,20 @@
+Script started on Tue 26 Apr 2016 03:35:19 PM EDT
+]0;/dev/pts/3@sl1
+[7m/home/6/todahl/Documents/c++/blackjack[80G[27m  % make
+g++ -c User.cpp			
+g++ -c Card.cpp
+g++ -c CardDeck.cpp
+g++ -c Database.cpp
+g++ -c Game.cpp
+g++ -o BlackJack User.o Card.o CardDeck.o Database.o Game.o
+]0;/dev/pts/3@sl1
+[7m/home/6/todahl/Documents/c++/blackjack[80G[27m  % BlackJack 
+
+Welcome to BlackJack! What would you like to do?
+1. Sign In 2. Make Account 3. Leaderboards 4. Quit 4
+]0;/dev/pts/3@sl1
+[7m/home/6/todahl/Documents/c++/blackjack[80G[27m  % exit
+]0;/dev/pts/3@sl1
+exit
+
+Script done on Tue 26 Apr 2016 03:35:36 PM EDT
