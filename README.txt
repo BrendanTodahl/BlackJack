@@ -23,6 +23,8 @@ Files:
 - User.h
 - User.cpp
 - makefile
+- AnalysisDesign.txt - Documentation for BlackJack project
+- Project.txt - Contains compilation results
 - README.txt
 - Scores.txt - Contains statistical information for each registered account
 - UserData.txt - Contains account information for all redistered accounts
