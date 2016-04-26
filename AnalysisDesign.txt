@@ -1,0 +1,60 @@
+Brendan Todahl
+CSE 4252
+Analysis Design
+
+Card: Handles relevant functions and member variables for Card objects.
+	Member Variables:
+		- private string suite: Value of what suite the card is. (Hearts, Diamonds, etc.)
+		- private string cardName: Value of the card. (1, 2, 3, etc.)
+	Member Functions:
+		- public Card(string aSuite, string aCardName): Constructor for creating new card objects.
+		- public string getSuite(): returns the value of member variable suite for that instance of card.
+		- public string getCardName(): return the value of member variable cardName for that instance of card.
+
+CardDeck: Handles the relevanct fucntions and member variables for a CardDeck object.
+	Member Variables:
+		- public vector<Card> deck: The deck created for that instance of CardDeck
+	Member Functions:
+		- public CardDeck(): Default constructor for a CardDeck object
+		- public void shuffle(): Shuffles the cards that are contained with a cardDeck utilizing std::random_shuffle() from <algorithm>
+
+User: Handles the revelant functions for maintaing user information and game data pertaining to that user.
+	Member Variables:
+		- private int ID: The unique ID that is associated with the current instance of User.
+		- private string userName: The unique user name associated with the current instance of User.
+		- private string password: The password associated with the current instance of User.
+		- private bool loggedIn: Boolean value that tells the program whether the current instance of User is logged in.
+		- private int numGamesWon: The total number of games that the current instance of User has won.
+		- private int numGamesPlayed: The total number of games that the current instance of User has played.
+		- private float winPercentage: The result of numGamesWon/numGamesPlayed.
+	Member Functions:
+		- public User(): The default constructor for the User class.
+		- User(int aID, string aUserName, string aPassword): Constructor for the User class.
+		- bool getLoggedIn(): returns true if user is logged in, otherwise false.
+		- void setLoggedIn(bool aLoggedIn): Allows the program to update whether the user is logged in or not.
+		- string getUserName(): returns the userName of the current User object.
+		- string getUserPassword(): return the password of the current User object.
+		- void fetchGameStats(): Reads in the stats for the current player from Scores.txt and assigns these values to numGamesWon, numGamesPlayed, and winPercentage.
+		- void updateStats(bool playerWon): This member function is called after a game has been completed and updates the data in Scores.txt appropriately and also updates the member variables numGamesWon, numGamesPlayed, and winPercentage for the current instance of User.
+		- int getNumGamesWon(): returns numGamesWon.
+		- int getNumGamesPlayed(): returns numGamesPlayed.
+		- float getWinPercentage(): returns winPercentage.
+
+Database: Handles the functionality of reading and writing to UserData.txt and Scores.txt appropriately when a user either logs in or creates an account.
+	Member Variables:
+		- none
+	Member Functions:
+		- static User* signIn(bool *inMainMenu, User *currentUser): 'Walks' the user through the login process and if the user is successful at logging in, then the function returns the updated instance of currentUser. Otherwise it returns an 'empty' User object.
+		- static void createAccount(): Walks the user through the account creation process and only lets the user create an account with a unique userName. If account creation is successful, the function updates UserData.txt and Scores.txt appropriately to account for the new user.
+
+Game.cpp: The 'main' process in this program.
+	Local Functions related to Game.cpp:
+		- int main(): Runs the application from start to finish.
+		- void initialDeal(CardDeck *deck, vector<Card> *dealerHand, vector<Card>  *playerHand): Starts the round by dealing two cards to both the player and dealer starting with the player.
+		- void finishDealerHand(CardDeck *deck, vector<Card> *dealerhand): Plays the game for the dealer, completing theiry hand.
+		- void determineWinner(int dealerScore, int playerScore, int dealerHandSize, int playerHandSize, bool *gameRunning, bool *round): Takes the player and dealer's score and determines the outcome of the round. Tie doesn't change stats.
+		- void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScore, int playerScore, bool isRoundOver): Takes the hands of both the dealer and players and their respective scores and prints the information to the screen.
+		- int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver): Calculates the score of the given hand.
+		- void displayLeaderboards(): Displays the scores for all players in order of highest to lowest.
+		- void runAccountSettingsMenu(): Handles user input for the account settings menu
+		- int intValidInput(int min, int max): Checks for valid integer input
