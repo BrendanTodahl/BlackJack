@@ -321,9 +321,9 @@ int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver)
 void displayLeaderboards() 
 {
 	map<int, string> names;
-	vector<pair<int, int> > gamesWon;			// key is player ID
-	map<int, int> gamesPlayed;					// key is player ID
-	map<int, float> winPercentage; 	// key is player ID
+	vector<pair<int, int> > gamesWon;	// key is player ID
+	map<int, int> gamesPlayed;			// key is player ID
+	map<int, float> winPercentage; 		// key is player ID
 	string line;
 	ifstream userDataFile ("UserData.txt");
 	if (userDataFile.is_open())
@@ -383,7 +383,21 @@ void displayLeaderboards()
 
 void runAccountSettingsMenu() 
 {
-	cout << "User name: " << currentUser->getUserName() << " Password: " << currentUser->getUserPassword() << endl;
+	bool done = false;
+	while(!done)
+	{
+		cout << "\nWelcome to account settings.\n" << "1. Display user information 2. Go Back to main ";
+		int userInput = 0;
+		userInput = intValidInput(1, 2);
+		if (userInput == 1) // Display user info
+		{
+			cout << "User name: " << currentUser->getUserName() << " Password: " << currentUser->getUserPassword() << endl;
+		}
+		else if (userInput == 2) // Go back to main
+		{
+			done = true;
+		}
+	}
 }
 
 int intValidInput(int min, int max)
