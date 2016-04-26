@@ -43,6 +43,10 @@ string User::getUserName() {
 	return userName;
 };
 
+string User::getUserPassword() {
+	return password;
+};
+
 // Get a reference to the current stats of current user
 void User::fetchGameStats() {
 	string line;

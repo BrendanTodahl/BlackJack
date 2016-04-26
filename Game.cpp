@@ -33,6 +33,8 @@ void printHands(vector<Card> dealerHand, vector<Card> playerHand, int dealerScor
 int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver);
 // Displays the scores for all players in order of highest to lowest
 void displayLeaderboards();
+// Handles user input for the account settings menu
+void runAccountSettingsMenu();
 // Checks for valid integer input
 int intValidInput(int min, int max);
 
@@ -79,9 +81,9 @@ int main ()
 			while (currentUser->getLoggedIn())
 			{
 				cout << endl << "Welcome " << currentUser->getUserName() << "!" << endl;
-				cout << "1. Play game 2. Stats 3. Leaderboards 4. Logout ";
+				cout << "1. Play game 2. Stats 3. Leaderboards 4. Account Settings 5. Logout ";
 				int userInput;
-				userInput = intValidInput(1, 4);
+				userInput = intValidInput(1, 5);
 				
 				if (userInput == 1)
 				{
@@ -138,7 +140,11 @@ int main ()
 				{
 					displayLeaderboards();
 				}
-				else if (userInput == 4) // logout
+				else if (userInput == 4) // Account info
+				{
+					runAccountSettingsMenu();
+				}
+				else if (userInput == 5) // logout
 				{
 					cout << "Thanks for playing!" << endl;
 					currentUser = new User();
@@ -315,9 +321,9 @@ int calculateScore(vector<Card> hand, bool isDealerHand, bool isRoundOver)
 void displayLeaderboards() 
 {
 	map<int, string> names;
-	vector<pair<int, int> > gamesWon;			// key is player ID
-	map<int, int> gamesPlayed;					// key is player ID
-	map<int, float> winPercentage; 	// key is player ID
+	vector<pair<int, int> > gamesWon;	// key is player ID
+	map<int, int> gamesPlayed;			// key is player ID
+	map<int, float> winPercentage; 		// key is player ID
 	string line;
 	ifstream userDataFile ("UserData.txt");
 	if (userDataFile.is_open())
@@ -372,6 +378,25 @@ void displayLeaderboards()
 	for (int i = 0; i < gamesWon.size(); i++)
 	{
 		cout << names.at(gamesWon[i].first) << "\t\t" << gamesWon[i].second << "\t\t" << winPercentage.at(gamesWon[i].first) * 100 << "%" << endl;
+	}
+}
+
+void runAccountSettingsMenu() 
+{
+	bool done = false;
+	while(!done)
+	{
+		cout << "\nWelcome to account settings.\n" << "1. Display user information 2. Go Back to main ";
+		int userInput = 0;
+		userInput = intValidInput(1, 2);
+		if (userInput == 1) // Display user info
+		{
+			cout << "User name: " << currentUser->getUserName() << " Password: " << currentUser->getUserPassword() << endl;
+		}
+		else if (userInput == 2) // Go back to main
+		{
+			done = true;
+		}
 	}
 }
 
